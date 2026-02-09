@@ -144,10 +144,11 @@ Open browser and navigate to: **http://localhost:5000**
 ---
 
 ### Metrics Comparison
-
 <p align="center">
-  <img src="./images/metrics_comparison.png" alt="Metrics Comparison Charts" width="100%"/>
+  <img src="./images/model_registry.png" alt="MLflow Model Registry" width="100%"/>
 </p>
+
+
 
 *Comparison of Accuracy, F1 Score, Precision, and Recall across all models*
 
@@ -230,9 +231,8 @@ Three models were trained and compared:
 ### Registered Models
 
 <p align="center">
-  <img src="./images/model_registry.png" alt="MLflow Model Registry" width="100%"/>
+  <img src="./images/metrics_comparison.png" alt="Metrics Comparison Charts" width="100%"/>
 </p>
-
 *MLflow Model Registry showing registered models with their status*
 
 ---
