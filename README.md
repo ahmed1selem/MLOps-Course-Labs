@@ -1,7 +1,5 @@
 # 🏦 Bank Customer Churn Prediction with MLflow
 
-> **التنبؤ بانخفاض عدد عملاء البنوك** - Predicting whether a bank customer will leave or not.
-
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![MLflow](https://img.shields.io/badge/MLflow-2.22.0-orange.svg)](https://mlflow.org/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.6.1-green.svg)](https://scikit-learn.org/)
@@ -136,7 +134,7 @@ Open browser and navigate to: **http://localhost:5000**
 ### Experiment Dashboard
 
 <p align="center">
-  <img src="./images/mlflow_experiments.png" alt="MLflow Experiment Dashboard" width="100%"/>
+  <img src="./images/model_registry.png" alt="MLflow Model Registry" width="100%"/>
 </p>
 
 *MLflow UI showing all experiment runs with metrics visualization*
@@ -145,8 +143,10 @@ Open browser and navigate to: **http://localhost:5000**
 
 ### Metrics Comparison
 <p align="center">
-  <img src="./images/model_registry.png" alt="MLflow Model Registry" width="100%"/>
+  <img src="./images/mlflow_experiments.png" alt="MLflow Experiment Dashboard" width="100%"/>
 </p>
+
+
 
 
 
