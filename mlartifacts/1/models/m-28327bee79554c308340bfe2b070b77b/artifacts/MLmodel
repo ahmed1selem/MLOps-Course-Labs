@@ -1,0 +1,44 @@
+artifact_path: mlflow-artifacts:/1/models/m-28327bee79554c308340bfe2b070b77b/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.5
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.6.1
+    skops_trusted_types: null
+is_signature_from_type_hint: false
+mlflow_version: 3.9.0
+model_id: m-28327bee79554c308340bfe2b070b77b
+model_size_bytes: 1366251
+model_uuid: m-28327bee79554c308340bfe2b070b77b
+prompts: null
+run_id: afcc0ca57da24c1b820d8a8e0ea7cfe2
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "standardscaler__CreditScore", "required":
+    true}, {"type": "double", "name": "standardscaler__Age", "required": true}, {"type":
+    "double", "name": "standardscaler__Tenure", "required": true}, {"type": "double",
+    "name": "standardscaler__Balance", "required": true}, {"type": "double", "name":
+    "standardscaler__NumOfProducts", "required": true}, {"type": "double", "name":
+    "standardscaler__HasCrCard", "required": true}, {"type": "double", "name": "standardscaler__IsActiveMember",
+    "required": true}, {"type": "double", "name": "standardscaler__EstimatedSalary",
+    "required": true}, {"type": "double", "name": "onehotencoder__Geography_Germany",
+    "required": true}, {"type": "double", "name": "onehotencoder__Geography_Spain",
+    "required": true}, {"type": "double", "name": "onehotencoder__Gender_Male", "required":
+    true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-02-09 10:22:03.344810'

@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.utils import resample
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import OneHotEncoder,  StandardScaler
 from sklearn.metrics import (
@@ -18,7 +19,8 @@ from sklearn.metrics import (
     confusion_matrix,
     ConfusionMatrixDisplay,
 )
-
+import mlflow
+import joblib
 ### Import MLflow
 
 def rebalance(data):
@@ -106,8 +108,9 @@ def preprocess(df):
     X_test = col_transf.transform(X_test)
     X_test = pd.DataFrame(X_test, columns=col_transf.get_feature_names_out())
 
+    joblib.dump(col_transf, 'preprocessor.pkl')
     # Log the transformer as an artifact
-
+    mlflow.log_artifact("./preprocessor.pkl")
     return col_transf, X_train, X_test, y_train, y_test
 
 
@@ -126,49 +129,128 @@ def train(X_train, y_train):
     log_reg.fit(X_train, y_train)
 
     ### Log the model with the input and output schema
+    predictions = log_reg.predict(X_train)
+
     # Infer signature (input and output schema)
-
+    signature = mlflow.models.infer_signature(X_train, predictions)
     # Log model
-
+    mlflow.sklearn.log_model(
+        sk_model=log_reg,
+        artifact_path="log_model",
+        signature=signature,
+        input_example=X_train
+    )
     ### Log the data
-
+    train_df = X_train.copy()
+    train_df['Exited'] = y_train  # Add target back
+    dataset = mlflow.data.from_pandas(train_df, targets='Exited')
+    mlflow.log_input(dataset, context="training")
     return log_reg
+
+def trainNew(model,run_name,params,X_train,y_train,X_test,y_test):
+    with mlflow.start_run(run_name=run_name):
+        mlflow.log_params(params)
+        model.fit(X_train,y_train)
+        pred=model.predict(X_train)
+        signature = mlflow.models.infer_signature(X_train, pred)
+        mlflow.sklearn.log_model(
+            sk_model=model,
+            artifact_path=f"{run_name}",
+            signature=signature,
+            input_example=X_train
+        )
+
+        y_pred = model.predict(X_test)
+        metrics = {
+            "accuracy": accuracy_score(y_test, y_pred),
+            "precision": precision_score(y_test, y_pred),
+            "recall": recall_score(y_test, y_pred),
+            "f1_score": f1_score(y_test, y_pred)
+        }
+        mlflow.log_metrics(metrics)
+        conf_mat = confusion_matrix(y_test, y_pred, labels=model.classes_)
+        conf_mat_disp = ConfusionMatrixDisplay(
+        confusion_matrix=conf_mat, display_labels=model.classes_
+    )
+        plt.title(f"Confusion Matrix: {run_name}")
+        plt.savefig(f"confusion_matrix_{run_name}.png")
+        mlflow.log_artifact(f"confusion_matrix_{run_name}.png")
+        conf_mat_disp.plot()
+            
+    
+        plt.close()
+
 
 
 def main():
     ### Set the tracking URI for MLflow
-
+    mlflow.set_tracking_uri("http://localhost:5000")
     ### Set the experiment name
-
-
+    mlflow.set_experiment("Log Experiment")
+    exp = mlflow.get_experiment_by_name("Log Experiment")
+    exp_id = exp.experiment_id
+    max_iter = 1000
     ### Start a new run and leave all the main function code as part of the experiment
+    with mlflow.start_run(experiment_id=exp_id, run_name="LogisticRegression"):
 
-    df = pd.read_csv("data/Churn_Modelling.csv")
-    col_transf, X_train, X_test, y_train, y_test = preprocess(df)
+        df = pd.read_csv("../dataset/Churn_Modelling.csv")
+        col_transf, X_train, X_test, y_train, y_test = preprocess(df)
 
     ### Log the max_iter parameter
+        mlflow.log_param("max_iter", max_iter)
 
-    model = train(X_train, y_train)
+        model = train(X_train, y_train)
 
     
-    y_pred = model.predict(X_test)
+        y_pred = model.predict(X_test)
 
     ### Log metrics after calculating them
-
+        accuracy = accuracy_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+        mlflow.log_metric("accuracy",accuracy)
+        mlflow.log_metric("precision",precision)
+        mlflow.log_metric("recall",recall)
+        mlflow.log_metric("f1",f1)
 
     ### Log tag
+        mlflow.set_tag("version", "1.0")
+        mlflow.set_tag("model", "LogisticRegression")
+ 
+        conf_mat = confusion_matrix(y_test, y_pred, labels=model.classes_)
+        conf_mat_disp = ConfusionMatrixDisplay(
+        confusion_matrix=conf_mat, display_labels=model.classes_)
+        conf_mat_disp.plot()
+    mlflow.end_run()
+
+    rf=RandomForestClassifier(n_estimators=100,max_depth=10,random_state=42)
+    rf_params = {"n_estimators": 100, "max_depth": 10}
+    trainNew(model=rf,
+             run_name="RandomForest",
+             params=rf_params,
+             X_train=X_train,
+               y_train=y_train,
+        X_test=X_test, 
+        y_test=y_test)
 
 
-    
-    conf_mat = confusion_matrix(y_test, y_pred, labels=model.classes_)
-    conf_mat_disp = ConfusionMatrixDisplay(
-        confusion_matrix=conf_mat, display_labels=model.classes_
-    )
-    conf_mat_disp.plot()
-    
-    # Log the image as an artifact in MLflow
-    
-    plt.show()
+    gb=GradientBoostingClassifier(n_estimators=100,learning_rate=0.1,random_state=42)
+    gb_params = {"n_estimators": 100, "learning_rate": 0.1}
+    trainNew(
+        model=gb,
+        run_name="GradientBoosting",
+        params=gb_params,
+             X_train=X_train,
+               y_train=y_train,
+        X_test=X_test, 
+        y_test=y_test)
+    mlflow.set_tracking_uri("http://localhost:5000")
+    run_rf = "3690f8b291404a2cbbb18de2ba6846e9" 
+    run_lr = "4d758d580a204ac4b0f1bfe06bb86067"
+
+    mlflow.register_model(f"runs:/{run_lr}/log_model", "logistic_Model")
+    mlflow.register_model(f"runs:/{run_rf}/RandomForest", "randomForst_Model")
 
 
 if __name__ == "__main__":
