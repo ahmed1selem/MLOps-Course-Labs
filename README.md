@@ -133,11 +133,25 @@ Open browser and navigate to: **http://localhost:5000**
 
 ## 📈 MLflow Tracking
 
-### Experiment Runs
-![MLflow Experiment Runs](images/mlflow_experiments.png)
+### Experiment Dashboard
+
+<p align="center">
+  <img src="./images/mlflow_experiments.png" alt="MLflow Experiment Dashboard" width="100%"/>
+</p>
+
+*MLflow UI showing all experiment runs with metrics visualization*
+
+---
 
 ### Metrics Comparison
-![Metrics Comparison](images/metrics_comparison.png)
+
+<p align="center">
+  <img src="./images/metrics_comparison.png" alt="Metrics Comparison Charts" width="100%"/>
+</p>
+
+*Comparison of Accuracy, F1 Score, Precision, and Recall across all models*
+
+---
 
 ### What We Log:
 
@@ -188,25 +202,42 @@ Three models were trained and compared:
 | Random Forest | 0.77 | 0.77 | 0.75 | 0.77 |
 | Gradient Boosting | 0.77 | 0.76 | 0.75 | 0.76 |
 
+---
+
 ### Confusion Matrices
 
-<p align="center">
-  <img src="images/confusion_matrix.png" width="30%" alt="Logistic Regression"/>
-  <img src="images/confusion_matrix_RandomForest.png" width="30%" alt="Random Forest"/>
-  <img src="images/confusion_matrix_GradientBoosting.png" width="30%" alt="Gradient Boosting"/>
-</p>
-<p align="center">
-  <em>Left: Logistic Regression | Center: Random Forest | Right: Gradient Boosting</em>
-</p>
+<table>
+  <tr>
+    <td align="center">
+      <img src="./images/confusion_matrix.png" width="250" alt="Logistic Regression"/><br/>
+      <b>Logistic Regression</b>
+    </td>
+    <td align="center">
+      <img src="./images/confusion_matrix_RandomForest.png" width="250" alt="Random Forest"/><br/>
+      <b>Random Forest</b>
+    </td>
+    <td align="center">
+      <img src="./images/confusion_matrix_GradientBoosting.png" width="250" alt="Gradient Boosting"/><br/>
+      <b>Gradient Boosting</b>
+    </td>
+  </tr>
+</table>
 
 ---
 
 ## 📦 Model Registry
 
 ### Registered Models
-![Model Registry](images/model_registry.png)
 
-### Registered Models:
+<p align="center">
+  <img src="./images/model_registry.png" alt="MLflow Model Registry" width="100%"/>
+</p>
+
+*MLflow Model Registry showing registered models with their status*
+
+---
+
+### Selected Models:
 
 #### 🟢 Production: Random Forest
 - **Justification**: Highest overall F1 score (0.77) and balanced precision-recall. Best generalization on unseen data.
