@@ -2,9 +2,12 @@
 Logging configuration.
 """
 
+import logging
 
-def setup_logging():
-    # TODO 1: Set up basic logging with level INFO using logging.basicConfig()
 
-    # TODO 2: Create a named logger using logging.getLogger() and return it
-    pass
+def setup_logging() -> logging.Logger:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(levelname)s - %(asctime)s - %(name)s - %(message)s",
+    )
+    return logging.getLogger("churn_prediction_api")

@@ -4,32 +4,39 @@ Model loading and prediction logic.
 The model must be loaded ONCE at module level, NOT inside the predict function.
 """
 
-# TODO 1: Load your serialized churn model (and preprocessor if any) from data/
-model = ...
+from pathlib import Path
+
+import joblib
+import pandas as pd
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+pipeline = joblib.load(BASE_DIR / "pipeline" / "pipeline.joblib")
+
+FEATURE_COLUMNS = [
+    "CreditScore",
+    "Geography",
+    "Gender",
+    "Age",
+    "Tenure",
+    "Balance",
+    "NumOfProducts",
+    "HasCrCard",
+    "IsActiveMember",
+    "EstimatedSalary",
+]
 
 
-def preprocess(features: list[float]) -> list[float]:
-    """
-    Takes raw features and applies necessary preprocessing (e.g. scaling).
-    """
-    # TODO 2: Apply any preprocessing steps here (if applicable)
-    return features
-
-
-def predict_churn(features: list[float]) -> int:
+def predict_churn(features: list[float | str]) -> int:
     """
     Takes a list of raw feature values and returns a churn prediction (0 or 1).
     """
-    # TODO 3: Preprocess the features
-    processed_features = preprocess(features)
-    
-    # TODO 4: Use model.predict() on processed_features to get a prediction and return it as an int
-    #         Hint: model.predict() expects a 2D array
-    pass
+    input_df = pd.DataFrame([features], columns=FEATURE_COLUMNS)
+    prediction = pipeline.predict(input_df)
+
+    return int(prediction[0])
 
 
 if __name__ == "__main__":
-    # TODO 5: Replace with sample features that match your model
-    sample = []
+    sample = [619, "France", "Female", 42, 2, 0, 1, 1, 1, 101348.88]
     print(f"Input:      {sample}")
     print(f"Prediction: {predict_churn(sample)}")
