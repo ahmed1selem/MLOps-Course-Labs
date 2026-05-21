@@ -7,6 +7,8 @@ Then open:
     http://localhost:8000/schema/swagger
 """
 
+from webbrowser import get
+
 from litestar import Litestar
 from pydantic import BaseModel
 
@@ -20,6 +22,8 @@ logger = setup_logging()
 # ---------------------------------------------------------------------------
 class ChurnRequest(BaseModel):
     # TODO 1: Add one field (type float) per feature your model expects
+    feature1: float
+    feature2: float
     pass
 
 
@@ -30,7 +34,27 @@ class ChurnRequest(BaseModel):
 # TODO 2: Create a GET endpoint at "/" that returns a welcome message
 #         Log that the home endpoint was accessed
 
+@get("/")
+async def hello_world() -> dict[str, str]:
+    return {"message": "Hello, world!"}
+
+app = Litestar(route_handlers=[hello_world])
+    
+
 # TODO 3: Create a GET endpoint at "/health" that returns {"status": "healthy"}
+
+@get("/")
+async def hello_world() -> dict[str, str]:
+    return {"message": "Hello, world!"}
+
+app = Litestar(route_handlers=[hello_world])
+    
+
+# TODO 3: Create a GET endpoint at "/health" that returns {"status": "healthy"}
+
+@get("/health")
+async def health_check() :
+    return {"status": "healthy"}
 
 # TODO 4: Create a POST endpoint at "/predict" that:
 #         - Accepts a ChurnRequest as the data parameter
