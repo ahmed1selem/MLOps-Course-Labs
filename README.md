@@ -19,6 +19,27 @@ uv run litestar --app main:app run --reload
 
 Swagger UI: http://localhost:8000/schema/swagger
 
+### Docker
+
+Build and run with Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Or use Docker directly:
+
+```bash
+docker build -t churn-prediction-api .
+docker run --rm -p 8000:8000 churn-prediction-api
+```
+
+Then open the API docs:
+
+```text
+http://localhost:8000/schema/swagger
+```
+
 ### Tests
 
 ```bash
